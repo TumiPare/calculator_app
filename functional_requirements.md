@@ -1,0 +1,5 @@
+- The system must allow users to perform an operation on only two or less inputted hexadecimal numbers (00 to FF)
+- The system must ensure that subtraction operations do not return negative results
+- The system must handle division by zero by displaying an appropriate error message.
+- The system must ensure that division operations only return integer values
+- The system must return results in hexadecimal format with a maximum of four digits
