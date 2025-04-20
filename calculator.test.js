@@ -1,4 +1,4 @@
-const {add, subtract, multiply, divide} = require("./calculator");
+import {add, divide, multiply, subtract} from "./calculator.js";
 
 test("addition of 1 and 2 should be 3", () => {
     expect(add(0x01,0x02)).toBe(0x03);
@@ -21,7 +21,7 @@ test("division of 4 and 2 should be 2", () => {
 })
 
 test("subtraction should not give us a negative result", () =>{
-    expect(() => subtract(0x03,0x05)).toThrow(/negative results not supported/);
+    expect(() => subtract(0x03,0x05)).toThrow(/Negative results not supported/);
 })
 
 test ("should display error message on division by zero", () => {

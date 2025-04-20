@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hexadecimal Calculator (Expression)</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        input, button { margin: 5px; padding: 10px; font-size: 1.2em; }
+        #result { margin-top: 10px; font-weight: bold; }
+        .numpad {
+            display: grid;
+            grid-template-columns: repeat(4, 60px);
+            gap: 8px;
+            margin-top: 15px;
+        }
+        .numpad button {
+            padding: 15px;
+            font-size: 1.2em;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background: #f0f0f0;
+            cursor: pointer;
+        }
+        .numpad button:active {
+            background: #ddd;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Hexadecimal Calculator</h1>
+
+<input type="text" id="expression" placeholder="Enter expression like 0A+05+01">
+<button onclick="evaluateExpression()">Calculate</button>
+
+<div id="result"></div>
+
+<div class="numpad">
+    <button onclick="appendValue('0')">0</button>
+    <button onclick="appendValue('1')">1</button>
+    <button onclick="appendValue('2')">2</button>
+    <button onclick="appendValue('3')">3</button>
+    <button onclick="appendValue('4')">4</button>
+    <button onclick="appendValue('5')">5</button>
+    <button onclick="appendValue('6')">6</button>
+    <button onclick="appendValue('7')">7</button>
+    <button onclick="appendValue('8')">8</button>
+    <button onclick="appendValue('9')">9</button>
+    <button onclick="appendValue('A')">A</button>
+    <button onclick="appendValue('B')">B</button>
+    <button onclick="appendValue('C')">C</button>
+    <button onclick="appendValue('D')">D</button>
+    <button onclick="appendValue('E')">E</button>
+    <button onclick="appendValue('F')">F</button>
+
+    <button onclick="appendValue('+')">+</button>
+    <button onclick="appendValue('-')">-</button>
+    <button onclick="appendValue('*')">*</button>
+    <button onclick="appendValue('/')">/</button>
+
+    <button onclick="clearExpression()" style="grid-column: span 2; background: #ffdddd;">Clear</button>
+    <button onclick="deleteLast()" style="grid-column: span 2;">⌫</button>
+</div>
+
+<div style="margin-top: 20px; padding: 15px; background: #f9f9f9; border: 1px solid #ddd; border-radius: 8px;">
+    <h2 style="margin-top: 0;">How to Use</h2>
+    <p>Enter a hexadecimal expression using 2-digit hex numbers (00 to FF) and the following operators:</p>
+    <ul style="line-height: 1.8;">
+        <li><strong>+</strong> → addition</li>
+        <li><strong>-</strong> → subtraction</li>
+        <li><strong>*</strong> → multiplication</li>
+        <li><strong>/</strong> → division (integer division)</li>
+    </ul>
+    <p>Example: <code>0A+05*02</code></p>
+</div>
+
+<script type="module">
+    import { add, subtract, multiply, divide } from './calculator.js';
+
+    function evaluateExpression() {
+        const expr = document.getElementById('expression').value.trim();
+        const resultDiv = document.getElementById('result');
+        try {
+            const result = calculateFromExpression(expr);
+            resultDiv.textContent = "Result: " + result.toString(16).toUpperCase();
+        } catch (e) {
+            resultDiv.textContent = e.message;
+        }
+    }
+
+    function calculateFromExpression(expr) {
+        const operators = ['+', '-', '*', '/'];
+        let tokens = expr.split(/([+\-*/])/);
+        if (tokens.length < 3) throw new Error("Invalid expression");
+
+        let result = parseInt(tokens[0], 16);
+        if (isNaN(result)) throw new Error("Invalid hex number: " + tokens[0]);
+
+        for (let i = 1; i < tokens.length; i += 2) {
+            const op = tokens[i];
+            const nextValue = parseInt(tokens[i + 1], 16);
+            if (isNaN(nextValue)) throw new Error("Invalid hex number: " + tokens[i + 1]);
+
+            switch (op) {
+                case '+': result = add(result, nextValue); break;
+                case '-': result = subtract(result, nextValue); break;
+                case '*': result = multiply(result, nextValue); break;
+                case '/': result = divide(result, nextValue); break;
+                default: throw new Error("Unsupported operator: " + op);
+            }
+        }
+
+        if (result < 0) throw new Error("Negative results not allowed");
+        if (result > 0xFFFF) throw new Error("Result exceeds 4 hex digits (FFFF)");
+
+        return result;
+    }
+
+    function appendValue(val) {
+        const exprInput = document.getElementById('expression');
+        exprInput.value += val;
+    }
+
+    function clearExpression() {
+        document.getElementById('expression').value = '';
+        document.getElementById('result').textContent = '';
+    }
+
+    function deleteLast() {
+        const exprInput = document.getElementById('expression');
+        exprInput.value = exprInput.value.slice(0, -1);
+    }
+
+    window.evaluateExpression = evaluateExpression;
+    window.appendValue = appendValue;
+    window.clearExpression = clearExpression;
+    window.deleteLast = deleteLast;
+</script>
+
+</body>
+</html>
