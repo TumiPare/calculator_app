@@ -1,4 +1,4 @@
-import {add, divide, multiply, subtract} from "./calculator.js";
+import {add, divide, multiply, subtract} from "./public/calculator.js";
 
 test("addition of 1 and 2 should be 3", () => {
     expect(add(0x01,0x02)).toBe(0x03);
